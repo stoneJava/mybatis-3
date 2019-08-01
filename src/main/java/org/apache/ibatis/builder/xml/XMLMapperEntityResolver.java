@@ -15,16 +15,17 @@
  */
 package org.apache.ibatis.builder.xml;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Locale;
-
 import org.apache.ibatis.io.Resources;
 import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Locale;
+
 /**
+ * 加载本地 mybatis-3-config.dtd  mybatis-3-mapper.dtd  文件
  * Offline entity resolver for the MyBatis DTDs.
  *
  * @author Clinton Begin

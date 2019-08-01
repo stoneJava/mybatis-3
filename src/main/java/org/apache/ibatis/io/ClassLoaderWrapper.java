@@ -201,6 +201,11 @@ public class ClassLoaderWrapper {
 
   }
 
+  /**
+   * 提供一组classloader
+   * @param classLoader
+   * @return
+   */
   ClassLoader[] getClassLoaders(ClassLoader classLoader) {
     return new ClassLoader[]{
         classLoader,
