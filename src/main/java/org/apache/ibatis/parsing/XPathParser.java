@@ -15,12 +15,11 @@
  */
 package org.apache.ibatis.parsing;
 
-import java.io.InputStream;
-import java.io.Reader;
-import java.io.StringReader;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
+import org.apache.ibatis.builder.BuilderException;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.*;
 
 import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilder;
@@ -28,18 +27,15 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
-
-import org.apache.ibatis.builder.BuilderException;
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.xml.sax.EntityResolver;
-import org.xml.sax.ErrorHandler;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-import org.xml.sax.SAXParseException;
+import java.io.InputStream;
+import java.io.Reader;
+import java.io.StringReader;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Properties;
 
 /**
+ * 使用JDK 自带XML 解析器解析XML文件
  * @author Clinton Begin
  * @author Kazuki Shimizu
  */
@@ -116,6 +112,13 @@ public class XPathParser {
     this.document = createDocument(new InputSource(new StringReader(xml)));
   }
 
+  /**
+   * 使用xpth解析配置文文件
+   * @param reader 配置文件字符流
+   * @param validation  是否进行DTD 校验
+   * @param variables  属性配置
+   * @param entityResolver  XML 实体解析器
+   */
   public XPathParser(Reader reader, boolean validation, Properties variables, EntityResolver entityResolver) {
     commonConstructor(validation, variables, entityResolver);
     this.document = createDocument(new InputSource(reader));

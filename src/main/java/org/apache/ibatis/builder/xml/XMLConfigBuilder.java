@@ -1,17 +1,17 @@
 /**
- *    Copyright 2009-2019 the original author or authors.
- *
- *    Licensed under the Apache License, Version 2.0 (the "License");
- *    you may not use this file except in compliance with the License.
- *    You may obtain a copy of the License at
- *
- *       http://www.apache.org/licenses/LICENSE-2.0
- *
- *    Unless required by applicable law or agreed to in writing, software
- *    distributed under the License is distributed on an "AS IS" BASIS,
- *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    See the License for the specific language governing permissions and
- *    limitations under the License.
+ * Copyright 2009-2019 the original author or authors.
+ * <p>
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apache.ibatis.builder.xml;
 
@@ -43,6 +43,8 @@ import java.io.Reader;
 import java.util.Properties;
 
 /**
+ * mybatis-config.xml 配置文件解析类
+ *
  * @author Clinton Begin
  * @author Kazuki Shimizu
  */
@@ -86,11 +88,17 @@ public class XMLConfigBuilder extends BaseBuilder {
     this.parser = parser;
   }
 
+  /**
+   * 只能解析一次
+   * @return
+   */
   public Configuration parse() {
+    //只能解析一次
     if (parsed) {
       throw new BuilderException("Each XMLConfigBuilder can only be used once.");
     }
     parsed = true;
+    //mybatis 配置文件解析主流程
     parseConfiguration(parser.evalNode("/configuration"));
     return configuration;
   }
@@ -110,14 +118,20 @@ public class XMLConfigBuilder extends BaseBuilder {
       pluginElement(root.evalNode("plugins"));
 //      MyBatis 每次创建结果对象的新实例时，它都会使用一个对象工厂（ObjectFactory）实例来完成,可继承 ObjectFactory 覆盖默认行为
       objectFactoryElement(root.evalNode("objectFactory"));
-      // mapUnderscoreToCamelCase
+      // mapUnderscoreToCamelCase 返回map 类型结果转换为驼峰命名
       objectWrapperFactoryElement(root.evalNode("objectWrapperFactory"));
+      //反射工厂，用于操作属性、构造器
       reflectorFactoryElement(root.evalNode("reflectorFactory"));
+      //mybatis 全局设置
       settingsElement(settings);
       // read it after objectFactory and objectWrapperFactory issue #631
+      // 多环境配置适应，有助于将sql映射到多个数据库，一个环境对应一个SqlSessionFactory
       environmentsElement(root.evalNode("environments"));
+      // 标识数据库厂商
       databaseIdProviderElement(root.evalNode("databaseIdProvider"));
+      // 类型处理器，对PreparedStatement 设置参数以及返回结果时进行类型转换
       typeHandlerElement(root.evalNode("typeHandlers"));
+      // 解析mappers(mapper.xml)配置文件
       mapperElement(root.evalNode("mappers"));
     } catch (Exception e) {
       throw new BuilderException("Error parsing SQL Mapper Configuration. Cause: " + e, e);
@@ -146,7 +160,7 @@ public class XMLConfigBuilder extends BaseBuilder {
       for (String clazz : clazzes) {
         if (!clazz.isEmpty()) {
           @SuppressWarnings("unchecked")
-          Class<? extends VFS> vfsImpl = (Class<? extends VFS>)Resources.classForName(clazz);
+          Class<? extends VFS> vfsImpl = (Class<? extends VFS>) Resources.classForName(clazz);
           configuration.setVfsImpl(vfsImpl);
         }
       }
@@ -282,8 +296,8 @@ public class XMLConfigBuilder extends BaseBuilder {
           DataSourceFactory dsFactory = dataSourceElement(child.evalNode("dataSource"));
           DataSource dataSource = dsFactory.getDataSource();
           Environment.Builder environmentBuilder = new Environment.Builder(id)
-              .transactionFactory(txFactory)
-              .dataSource(dataSource);
+            .transactionFactory(txFactory)
+            .dataSource(dataSource);
           configuration.setEnvironment(environmentBuilder.build());
         }
       }

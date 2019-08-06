@@ -15,17 +15,19 @@
  */
 package org.apache.ibatis.session;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.Reader;
-import java.util.Properties;
-
 import org.apache.ibatis.builder.xml.XMLConfigBuilder;
 import org.apache.ibatis.exceptions.ExceptionFactory;
 import org.apache.ibatis.executor.ErrorContext;
 import org.apache.ibatis.session.defaults.DefaultSqlSessionFactory;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.Reader;
+import java.util.Properties;
+
 /**
+ * 提供了根据字符流、字节流以及直接使用org.apache.ibatis.session.Configuration 配置类三种方式读取配置信息，
+ * 字符流、字节流也是通过XMLConfigBuilder.parse方法构建为Configuration 配置类
  * Builds {@link SqlSession} instances.
  *
  * @author Clinton Begin
@@ -44,6 +46,13 @@ public class SqlSessionFactoryBuilder {
     return build(reader, null, properties);
   }
 
+  /**
+   * 字符流读取mybatis-config.xml 入口
+   * @param reader
+   * @param environment
+   * @param properties
+   * @return
+   */
   public SqlSessionFactory build(Reader reader, String environment, Properties properties) {
     try {
       XMLConfigBuilder parser = new XMLConfigBuilder(reader, environment, properties);
