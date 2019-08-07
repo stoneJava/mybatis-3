@@ -210,7 +210,8 @@ public class XPathParser {
   }
 
   public XNode evalNode(String expression) {
-    return evalNode(document, expression);
+    XNode xNode = evalNode(document, expression);
+    return xNode;
   }
 
   public XNode evalNode(Object root, String expression) {

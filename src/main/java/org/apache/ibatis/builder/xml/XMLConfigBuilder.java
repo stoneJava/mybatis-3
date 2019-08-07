@@ -105,7 +105,9 @@ public class XMLConfigBuilder extends BaseBuilder {
 
   private void parseConfiguration(XNode root) {
     try {
+      System.out.println(root.toString());
       //issue #117 read properties first
+      //解析 properties 节点，节点内容保存到 configuration 对象中
       propertiesElement(root.evalNode("properties"));
       Properties settings = settingsAsProperties(root.evalNode("settings"));
       //加载虚拟文件系统（VFS）设置 todo: VFS 具体用法？
