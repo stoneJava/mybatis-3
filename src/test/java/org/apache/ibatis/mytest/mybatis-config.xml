@@ -23,7 +23,10 @@
 <configuration>
 
 
-  <properties resource="org/apache/ibatis/mytest/jdbc.properties"/>
+  <properties resource="org/apache/ibatis/mytest/jdbc.properties">
+    <property name="username" value="sb"/>
+  </properties>
+
 
   <!-- 全局参数 -->
   <settings>
@@ -71,7 +74,7 @@
            <dataSource type="UNPOOLED">
                <property name="driver" value="${driver}"/>
                <property name="url" value="${url}"/>
-               <property name="username" value="${sa}"/>
+               <property name="username" value="${username}"/>
            </dataSource>
        </environment>
    </environments>

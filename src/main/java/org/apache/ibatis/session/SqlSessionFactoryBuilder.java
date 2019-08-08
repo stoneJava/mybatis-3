@@ -55,9 +55,9 @@ public class SqlSessionFactoryBuilder {
    */
   public SqlSessionFactory build(Reader reader, String environment, Properties properties) {
     try {
-      //传入properties 优先级高于mybatis-config.xml 文件
+      //参数传入properties 优先级高于mybatis-config.xml 文件
       XMLConfigBuilder parser = new XMLConfigBuilder(reader, environment, properties);
-      //将mybatis-config.xml 内容解析后保存到Configuration 对象，通过build 方法创建DefaultSqlSessionFactory
+      // parse 方法 将mybatis-config.xml 内容解析后保存到Configuration 对象，通过build 方法创建DefaultSqlSessionFactory
       return build(parser.parse());
     } catch (Exception e) {
       throw ExceptionFactory.wrapException("Error building SqlSession.", e);

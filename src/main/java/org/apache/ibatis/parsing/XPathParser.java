@@ -230,19 +230,28 @@ public class XPathParser {
     }
   }
 
+  /**
+   * 根据mybatis-config.xml自身需要创建一个文档解析器，
+   * 然后调用parse将输入 input source 解析为DOM XML 返回
+   * @param inputSource
+   * @return
+   */
   private Document createDocument(InputSource inputSource) {
     // important: this must only be called AFTER common constructor
     try {
       DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
       factory.setValidating(validation);
-
+      //是否支持XML 命名空间
       factory.setNamespaceAware(false);
       factory.setIgnoringComments(true);
       factory.setIgnoringElementContentWhitespace(false);
+      //是否将CDATA节点转换为Text节点
       factory.setCoalescing(false);
+      //设置是否展开实体应用节点，todo:应该是sql片段医用的关键
       factory.setExpandEntityReferences(true);
 
       DocumentBuilder builder = factory.newDocumentBuilder();
+      //设置解析mybatis-config.xml 文档节点解析器，也就是上面 XMLMapperEntityResolver
       builder.setEntityResolver(entityResolver);
       builder.setErrorHandler(new ErrorHandler() {
         @Override

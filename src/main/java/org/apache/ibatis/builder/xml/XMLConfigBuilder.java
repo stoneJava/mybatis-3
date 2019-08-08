@@ -80,6 +80,7 @@ public class XMLConfigBuilder extends BaseBuilder {
   }
 
   private XMLConfigBuilder(XPathParser parser, String environment, Properties props) {
+    //调用父类构造方法，主要是设置类型别名注册器、类型处理注册器
     super(new Configuration());
     ErrorContext.instance().resource("SQL Mapper Configuration");
     this.configuration.setVariables(props);
@@ -105,7 +106,6 @@ public class XMLConfigBuilder extends BaseBuilder {
 
   private void parseConfiguration(XNode root) {
     try {
-      System.out.println(root.toString());
       //issue #117 read properties first
       //解析 properties 节点，节点内容保存到 configuration 对象中
       propertiesElement(root.evalNode("properties"));
@@ -146,6 +146,7 @@ public class XMLConfigBuilder extends BaseBuilder {
     }
     Properties props = context.getChildrenAsProperties();
     // Check that all settings are known to the configuration class
+    //检查settings节点是否在Configuration 类的定义范围内
     MetaClass metaConfig = MetaClass.forClass(Configuration.class, localReflectorFactory);
     for (Object key : props.keySet()) {
       if (!metaConfig.hasSetter(String.valueOf(key))) {
@@ -236,11 +237,18 @@ public class XMLConfigBuilder extends BaseBuilder {
     }
   }
 
+  /**
+   * 解析mybatis-config.xml 中properties节点，参数传入的properties 具有最高优先级，url/resource次之，
+   * 配置文件中 中properties节点 配置的属性优先级最低
+   * @param context
+   * @throws Exception
+   */
   private void propertiesElement(XNode context) throws Exception {
     if (context != null) {
       Properties defaults = context.getChildrenAsProperties();
       String resource = context.getStringAttribute("resource");
       String url = context.getStringAttribute("url");
+      //URL 和 Resource 不能同时配置
       if (resource != null && url != null) {
         throw new BuilderException("The properties element cannot specify both a URL and a resource based property file reference.  Please specify one or the other.");
       }
@@ -249,6 +257,7 @@ public class XMLConfigBuilder extends BaseBuilder {
       } else if (url != null) {
         defaults.putAll(Resources.getUrlAsProperties(url));
       }
+      //参数传入的properties 覆盖配置文件中的
       Properties vars = configuration.getVariables();
       if (vars != null) {
         defaults.putAll(vars);
