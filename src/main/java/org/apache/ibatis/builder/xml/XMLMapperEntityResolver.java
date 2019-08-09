@@ -25,6 +25,7 @@ import java.io.InputStream;
 import java.util.Locale;
 
 /**
+ *
  * 加载本地 mybatis-3-config.dtd  mybatis-3-mapper.dtd  文件
  * Offline entity resolver for the MyBatis DTDs.
  *
