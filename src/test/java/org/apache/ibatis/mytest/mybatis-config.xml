@@ -68,9 +68,11 @@
   </settings>
    <environments default="development">
        <environment id="development">
+          <!-- JDBC和MANAGED 都实现了Transaction ，JDBC就是直接使用JDBC 提交和回滚，MANAGED 让容器管理事物，如:(Jboss，weblogic) -->
            <transactionManager type="JDBC">
                <property name="" value=""/>
            </transactionManager>
+          <!--mybaties数据源配置类型（POOLED、JNDI、UNPOOLED）-->
            <dataSource type="UNPOOLED">
                <property name="driver" value="${driver}"/>
                <property name="url" value="${url}"/>
@@ -78,7 +80,6 @@
            </dataSource>
        </environment>
    </environments>
-
 
   <mappers>
     <mapper resource="org/apache/ibatis/mytest/AutoConstructorMapper.xml"/>

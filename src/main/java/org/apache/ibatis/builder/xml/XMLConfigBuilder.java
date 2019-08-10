@@ -114,24 +114,26 @@ public class XMLConfigBuilder extends BaseBuilder {
       loadCustomVfs(settings);
       //加载Mybatis 日志实现
       loadCustomLogImpl(settings);
-      //加载类型别名设置（Bean），只和XML配置有关，主要是为了减少类完全限定名冗余
+      //加载类型别名设置（Bean），只和XML配置有关，提供了具体类的别名以及包的别名设置，是为了减少类完全限定名冗余
       typeAliasesElement(root.evalNode("typeAliases"));
       //MyBatis 允许你在已映射语句执行过程中的某一点进行拦截调用。默认情况下，MyBatis 允许使用插件来拦截的方法调用包括：Executor  ParameterHandler ResultSetHandler StatementHandler
       pluginElement(root.evalNode("plugins"));
-//      MyBatis 每次创建结果对象的新实例时，它都会使用一个对象工厂（ObjectFactory）实例来完成,可继承 ObjectFactory 覆盖默认行为
+      //MyBatis 每次创建结果对象的新实例时，它都会使用一个对象工厂（ObjectFactory）实例来完成,
+      // 可继承 ObjectFactory 覆盖默认行为，默认使用DefaultObjectFactory
       objectFactoryElement(root.evalNode("objectFactory"));
-      // mapUnderscoreToCamelCase 返回map 类型结果转换为驼峰命名
+      // 主要用来包装返回result对象 ，比如说可以用来设置某些敏感字段脱敏或者加密等。默认是用DefaultObjectWrapperFactory
       objectWrapperFactoryElement(root.evalNode("objectWrapperFactory"));
-      //反射工厂，用于操作属性、构造器
+      //反射工厂，用于操作属性、构造器，默认是用 DefaultReflectorFactory
       reflectorFactoryElement(root.evalNode("reflectorFactory"));
-      //mybatis 全局设置
+      //mybatis 全局设置,将各属性值赋给configuration , 并对未设置项重新设置默认值。
       settingsElement(settings);
       // read it after objectFactory and objectWrapperFactory issue #631
-      // 多环境配置适应，有助于将sql映射到多个数据库，一个环境对应一个SqlSessionFactory
+      // 多环境配置适应，默认加载default，有助于将sql映射到多个数据库，一个环境对应一个SqlSessionFactory
       environmentsElement(root.evalNode("environments"));
-      // 标识数据库厂商
+      // 标识数据库厂商,可以根据不通的数据库厂商执行不同的语句，@see https://www.cnblogs.com/hellowhy/p/9676037.html
       databaseIdProviderElement(root.evalNode("databaseIdProvider"));
-      // 类型处理器，对PreparedStatement 设置参数以及返回结果时进行类型转换
+      // 类型处理器，无论是在预处理语句（PreparedStatement）中设置一个参数时，还是从结果集中取出一个值时，
+      // 都会用类型处理器将获取的值以合适的方式转换成 Java 类型
       typeHandlerElement(root.evalNode("typeHandlers"));
       // 解析mappers(mapper.xml)配置文件
       mapperElement(root.evalNode("mappers"));
@@ -175,6 +177,10 @@ public class XMLConfigBuilder extends BaseBuilder {
     configuration.setLogImpl(logImpl);
   }
 
+  /**
+   * 加载类型别名设置（Bean），只和XML配置有关，提供了具体类的别名以及包的别名设置，是为了减少类完全限定名冗余
+   * @param parent
+   */
   private void typeAliasesElement(XNode parent) {
     if (parent != null) {
       for (XNode child : parent.getChildren()) {
