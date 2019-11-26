@@ -1,17 +1,17 @@
 /**
- * Copyright 2009-2019 the original author or authors.
- * <p>
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p>
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *    Copyright 2009-2019 the original author or authors.
+ *
+ *    Licensed under the Apache License, Version 2.0 (the "License");
+ *    you may not use this file except in compliance with the License.
+ *    You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    Unless required by applicable law or agreed to in writing, software
+ *    distributed under the License is distributed on an "AS IS" BASIS,
+ *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    See the License for the specific language governing permissions and
+ *    limitations under the License.
  */
 package org.apache.ibatis.session;
 
@@ -51,6 +51,12 @@ import org.apache.ibatis.logging.nologging.NoLoggingImpl;
 import org.apache.ibatis.logging.slf4j.Slf4jImpl;
 import org.apache.ibatis.logging.stdout.StdOutImpl;
 import org.apache.ibatis.mapping.*;
+import org.apache.ibatis.mapping.Environment;
+import org.apache.ibatis.mapping.MappedStatement;
+import org.apache.ibatis.mapping.ParameterMap;
+import org.apache.ibatis.mapping.ResultMap;
+import org.apache.ibatis.mapping.ResultSetType;
+import org.apache.ibatis.mapping.VendorDatabaseIdProvider;
 import org.apache.ibatis.parsing.XNode;
 import org.apache.ibatis.plugin.Interceptor;
 import org.apache.ibatis.plugin.InterceptorChain;
@@ -251,7 +257,7 @@ public class Configuration {
   /**
    * mybatis TypeHandlerRegistry ,自动注册mybatis 提供的 typehandler
    */
-  protected final TypeHandlerRegistry typeHandlerRegistry = new TypeHandlerRegistry();
+  protected final TypeHandlerRegistry typeHandlerRegistry = new TypeHandlerRegistry(this);
   /**
    * 类型注册器, 用于在执行sql语句的出入参映射以及mybatis-config文件里的各种配置比如<transactionManager type="JDBC"/><dataSource type="POOLED">时使用简写
    */
@@ -539,6 +545,20 @@ public class Configuration {
    */
   public void setDefaultFetchSize(Integer defaultFetchSize) {
     this.defaultFetchSize = defaultFetchSize;
+  }
+
+  /**
+   * @since 3.5.2
+   */
+  public ResultSetType getDefaultResultSetType() {
+    return defaultResultSetType;
+  }
+
+  /**
+   * @since 3.5.2
+   */
+  public void setDefaultResultSetType(ResultSetType defaultResultSetType) {
+    this.defaultResultSetType = defaultResultSetType;
   }
 
   public boolean isUseColumnLabel() {
@@ -1033,6 +1053,7 @@ public class Configuration {
       return this;
     }
 
+    @Override
     @SuppressWarnings("unchecked")
     public V put(String key, V value) {
       if (containsKey(key)) {
@@ -1050,6 +1071,7 @@ public class Configuration {
       return super.put(key, value);
     }
 
+    @Override
     public V get(Object key) {
       V value = super.get(key);
       if (value == null) {

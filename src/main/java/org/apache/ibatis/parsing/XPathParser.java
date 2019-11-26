@@ -21,6 +21,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.*;
 
+import javax.xml.XMLConstants;
 import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -240,6 +241,7 @@ public class XPathParser {
     // important: this must only be called AFTER common constructor
     try {
       DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+      factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
       factory.setValidating(validation);
       //是否支持XML 命名空间
       factory.setNamespaceAware(false);
@@ -266,6 +268,7 @@ public class XPathParser {
 
         @Override
         public void warning(SAXParseException exception) throws SAXException {
+          // NOP
         }
       });
       return builder.parse(inputSource);
