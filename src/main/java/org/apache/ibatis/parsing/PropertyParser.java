@@ -26,6 +26,7 @@ public class PropertyParser {
   private static final String KEY_PREFIX = "org.apache.ibatis.parsing.PropertyParser.";
   /**
    * The special property key that indicate whether enable a default value on placeholder.
+   * 通过在properties 中指定 org.apache.ibatis.parsing.PropertyParser.enable-default-value : true 开启指定占位符特性
    * <p>
    *   The default value is {@code false} (indicate disable a default value on placeholder)
    *   If you specify the {@code true}, you can specify key and default value on placeholder (e.g. {@code ${db.username:postgres}}).
@@ -35,7 +36,9 @@ public class PropertyParser {
   public static final String KEY_ENABLE_DEFAULT_VALUE = KEY_PREFIX + "enable-default-value";
 
   /**
+   * 默认分隔符,通过 properties 中的org.apache.ibatis.parsing.PropertyParser.enable-default-separator 修改
    * The special property key that specify a separator for key and default value on placeholder.
+   *
    * <p>
    *   The default separator is {@code ":"}.
    * </p>

@@ -49,7 +49,7 @@ public class SqlSessionFactoryBuilder {
   /**
    * 字符流读取mybatis-config.xml 入口
    * @param reader
-   * @param environment
+   * @param environment environment id,默认是用 default
    * @param properties
    * @return
    */

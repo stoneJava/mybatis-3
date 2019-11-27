@@ -16,6 +16,7 @@
 package org.apache.ibatis.parsing;
 
 /**
+ * 表达式解析类
  * @author Clinton Begin
  */
 public class GenericTokenParser {
@@ -30,6 +31,11 @@ public class GenericTokenParser {
     this.handler = handler;
   }
 
+  /**
+   *  根据 opentToken  closeToken 表达式，替换 text 为 handler.Properties 中的值
+   * @param text
+   * @return
+   */
   public String parse(String text) {
     if (text == null || text.isEmpty()) {
       return "";

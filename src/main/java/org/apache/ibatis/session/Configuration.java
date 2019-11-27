@@ -205,7 +205,7 @@ public class Configuration {
   protected AutoMappingUnknownColumnBehavior autoMappingUnknownColumnBehavior = AutoMappingUnknownColumnBehavior.NONE;
 
   /**
-   * 保存mybatis-config.xml 文件settings下的properties 属性
+   * 保存mybatis-config.xml 文件的属性以及settings 全局设置
    */
   protected Properties variables = new Properties();
 

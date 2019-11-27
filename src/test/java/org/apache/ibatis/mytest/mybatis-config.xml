@@ -66,9 +66,12 @@
     <!--   参数自动绑定   -->
     <setting name="useActualParamName" value="true"/>
   </settings>
+  <!-- 默认使用 的环境ID -->
    <environments default="development">
        <environment id="development">
-          <!-- JDBC和MANAGED 都实现了Transaction ，JDBC就是直接使用JDBC 提交和回滚，MANAGED 让容器管理事物，如:(Jboss，weblogic) -->
+          <!-- JDBC和MANAGED 都实现了Transaction ，JDBC就是直接使用JDBC 提交和回滚，
+            MANAGED 让容器管理事物，如:(Jboss，weblogic) ,J2EE 默认情况下它会关闭连接,
+            然而一些容器并不希望这样，因此需要将 closeConnection 属性设置为 false 来阻止它默认的关闭行为-->
            <transactionManager type="JDBC">
                <property name="" value=""/>
            </transactionManager>

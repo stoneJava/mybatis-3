@@ -109,6 +109,7 @@ public class XMLConfigBuilder extends BaseBuilder {
       //issue #117 read properties first
       //解析 properties 节点，节点内容保存到 configuration 对象中
       propertiesElement(root.evalNode("properties"));
+      //读取settings 全局参数设置
       Properties settings = settingsAsProperties(root.evalNode("settings"));
       //加载虚拟文件系统（VFS）设置 todo: VFS 具体用法？
       loadCustomVfs(settings);
@@ -121,21 +122,22 @@ public class XMLConfigBuilder extends BaseBuilder {
       //MyBatis 每次创建结果对象的新实例时，它都会使用一个对象工厂（ObjectFactory）实例来完成,
       // 可继承 ObjectFactory 覆盖默认行为，默认使用DefaultObjectFactory
       objectFactoryElement(root.evalNode("objectFactory"));
-      // 主要用来包装返回result对象 ，比如说可以用来设置某些敏感字段脱敏或者加密等。默认是用DefaultObjectWrapperFactory
+      // 主要用来包装返回result对象 ，比如说可以用来设置某些敏感字段脱敏或者加密等。默认是用DefaultObjectWrapperFactory,解析后保存到Confguration中
       objectWrapperFactoryElement(root.evalNode("objectWrapperFactory"));
-      //反射工厂，用于操作属性、构造器，默认是用 DefaultReflectorFactory
+      //反射工厂，用于操作属性、构造器，默认是用 DefaultReflectorFactory,解析后保存到Confguration中
       reflectorFactoryElement(root.evalNode("reflectorFactory"));
       //mybatis 全局设置,将各属性值赋给configuration , 并对未设置项重新设置默认值。
       settingsElement(settings);
       // read it after objectFactory and objectWrapperFactory issue #631
-      // 多环境配置适应，默认加载default，有助于将sql映射到多个数据库，一个环境对应一个SqlSessionFactory
+      // 多环境配置适应，默认加载default，有助于将sql映射到多个数据库，一个环境对应一个SqlSessionFactory,解析后保存到Confguration中
       environmentsElement(root.evalNode("environments"));
-      // 标识数据库厂商,可以根据不通的数据库厂商执行不同的语句，@see https://www.cnblogs.com/hellowhy/p/9676037.html
+      // 标识数据库厂商,可以根据不通的数据库厂商执行不同的语句，@see https://www.cnblogs.com/hellowhy/p/9676037.html,
+      //解析后保存到Confguration中
       databaseIdProviderElement(root.evalNode("databaseIdProvider"));
       // 类型处理器，无论是在预处理语句（PreparedStatement）中设置一个参数时，还是从结果集中取出一个值时，
       // 都会用类型处理器将获取的值以合适的方式转换成 Java 类型
       typeHandlerElement(root.evalNode("typeHandlers"));
-      // 解析mappers(mapper.xml)配置文件
+      // 解析mappers(mapper.xml)配置文件,解析后保存到Confguration中
       mapperElement(root.evalNode("mappers"));
     } catch (Exception e) {
       throw new BuilderException("Error parsing SQL Mapper Configuration. Cause: " + e, e);
@@ -245,30 +247,34 @@ public class XMLConfigBuilder extends BaseBuilder {
 
   /**
    * 解析mybatis-config.xml 中properties节点，参数传入的properties 具有最高优先级，url/resource次之，
-   * 配置文件中 中properties节点 配置的属性优先级最低
+   * 配置文件中 中properties节点 配置的属性优先级最低,把所有解析出来的属性变量都保存到Configuration类中
    * @param context
    * @throws Exception
    */
   private void propertiesElement(XNode context) throws Exception {
     if (context != null) {
+      //解析mybatis-config.xml 中properties 属性值
       Properties defaults = context.getChildrenAsProperties();
+      //读取外部properties 属性文件
       String resource = context.getStringAttribute("resource");
       String url = context.getStringAttribute("url");
       //URL 和 Resource 不能同时配置
       if (resource != null && url != null) {
         throw new BuilderException("The properties element cannot specify both a URL and a resource based property file reference.  Please specify one or the other.");
       }
+      //putAll 会用外部配置文件(resource 或 url) 中property 覆盖 properties 节点的属性
       if (resource != null) {
         defaults.putAll(Resources.getResourceAsProperties(resource));
       } else if (url != null) {
         defaults.putAll(Resources.getUrlAsProperties(url));
       }
-      //参数传入的properties 覆盖配置文件中的
+      //参数传入的properties 覆盖配置文件中的属性
       Properties vars = configuration.getVariables();
       if (vars != null) {
         defaults.putAll(vars);
       }
       parser.setVariables(defaults);
+      //属性保存到Configuration 中
       configuration.setVariables(defaults);
     }
   }
@@ -363,6 +369,10 @@ public class XMLConfigBuilder extends BaseBuilder {
     throw new BuilderException("Environment declaration requires a DataSourceFactory.");
   }
 
+  /**
+   * 解析 typeHandlers 节点并注册到
+   * @param parent
+   */
   private void typeHandlerElement(XNode parent) {
     if (parent != null) {
       for (XNode child : parent.getChildren()) {

@@ -15,18 +15,19 @@
  */
 package org.apache.ibatis.parsing;
 
+import org.w3c.dom.CharacterData;
+import org.w3c.dom.*;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import org.w3c.dom.CharacterData;
-import org.w3c.dom.Element;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-
 /**
+ *
+ * 包装模式，对org.w3c.dom.Node 包装，对Node 进行功能增强,
+ * 把属性封装成 name, value 的形式
+ *
  * @author Clinton Begin
  */
 public class XNode {
@@ -287,6 +288,10 @@ public class XNode {
     }
   }
 
+  /**
+   * 把通过org.w3c.dom.node 获取的NodeList 转换为List<XNode>
+   * @return
+   */
   public List<XNode> getChildren() {
     List<XNode> children = new ArrayList<>();
     NodeList nodeList = node.getChildNodes();

@@ -36,16 +36,31 @@ import java.util.List;
 import java.util.Properties;
 
 /**
- * 使用JDK 自带XML 解析器解析XML文件
+ * 使用JDK 自带XML 解析器,解析XML文件
  * @author Clinton Begin
  * @author Kazuki Shimizu
  */
 public class XPathParser {
 
+  /**
+   * XML Document 对象
+   */
   private final Document document;
+  /**
+   * 是否校验
+   */
   private boolean validation;
+  /**
+   * XML 实体解析器
+   */
   private EntityResolver entityResolver;
+  /**
+   *  变量 Properties 对象
+   */
   private Properties variables;
+  /**
+   * Java Xpath 对象
+   */
   private XPath xpath;
 
   public XPathParser(String xml) {
@@ -144,7 +159,9 @@ public class XPathParser {
   }
 
   public String evalString(Object root, String expression) {
+    //读取 XML 配置文件中节点的值
     String result = (String) evaluate(expression, root, XPathConstants.STRING);
+    // result 如果是表达式，用 Properties 中的值替换
     result = PropertyParser.parse(result, variables);
     return result;
   }
@@ -215,7 +232,15 @@ public class XPathParser {
     return xNode;
   }
 
+  /**
+   * 解析指定节点，并将org.w3c.dom.node 转成包装类XNode
+   * @param root
+   * @param expression
+   * @return
+   */
   public XNode evalNode(Object root, String expression) {
+
+    //调用Java xpath 方法将xml 解析为org.w3c.dom.node 节点
     Node node = (Node) evaluate(expression, root, XPathConstants.NODE);
     if (node == null) {
       return null;
@@ -242,14 +267,16 @@ public class XPathParser {
     try {
       DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
       factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+      //是否验证 XML
       factory.setValidating(validation);
       //是否支持XML 命名空间
       factory.setNamespaceAware(false);
+      // 忽略注释
       factory.setIgnoringComments(true);
       factory.setIgnoringElementContentWhitespace(false);
       //是否将CDATA节点转换为Text节点
       factory.setCoalescing(false);
-      //设置是否展开实体应用节点，todo:应该是sql片段医用的关键
+      //设置是否展开实体应用节点，todo:应该是sql片段引用的关键
       factory.setExpandEntityReferences(true);
 
       DocumentBuilder builder = factory.newDocumentBuilder();

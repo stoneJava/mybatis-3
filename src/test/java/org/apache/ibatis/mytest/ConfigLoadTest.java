@@ -26,7 +26,7 @@ public class ConfigLoadTest {
   static void setUp() throws Exception {
     // create a SqlSessionFactory
     try (Reader reader = Resources.getResourceAsReader("org/apache/ibatis/mytest/mybatis-config.xml")) {
-      sqlSessionFactory = new SqlSessionFactoryBuilder().build(reader);
+      sqlSessionFactory = new SqlSessionFactoryBuilder().build(reader,"development");
     }
 
     // populate in-memory database
