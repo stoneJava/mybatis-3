@@ -16,7 +16,7 @@
 package org.apache.ibatis.parsing;
 
 /**
- * 表达式解析类
+ * 通用表达式解析类,提供properties 、 sql 动态表达式解析 ${},#{}
  * @author Clinton Begin
  */
 public class GenericTokenParser {
@@ -32,7 +32,8 @@ public class GenericTokenParser {
   }
 
   /**
-   *  根据 opentToken  closeToken 表达式，替换 text 为 handler.Properties 中的值
+   *  根据 opentToken  closeToken 表达式，解析 text 中的变量名称，
+   *  handler.handleToken 方法 把 text变量的值替换handler.Properties 中的值
    * @param text
    * @return
    */

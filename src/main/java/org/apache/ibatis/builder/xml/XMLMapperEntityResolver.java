@@ -25,8 +25,10 @@ import java.io.InputStream;
 import java.util.Locale;
 
 /**
- *
+ * SAX应用程序实现自定义处理外部实体，需要实现EntityResolver 接口，
+ * 默认是实现会通过网络加载（就是DTD声明的地址）
  * 加载本地 mybatis-3-config.dtd  mybatis-3-mapper.dtd  文件
+ * @see https://blog.csdn.net/sicofield/article/details/79282918?utm_source=blogxgwz4
  * Offline entity resolver for the MyBatis DTDs.
  *
  * @author Clinton Begin
@@ -46,7 +48,9 @@ public class XMLMapperEntityResolver implements EntityResolver {
    * Converts a public DTD into a local one.
    *
    * @param publicId The public id that is what comes after "PUBLIC"
+   *                 DTD 声明 PUBLIC 后面的第一部分内容(-//mybatis.org//DTD Config 3.0//EN)
    * @param systemId The system id that is what comes after the public id.
+   *                 DTD 声明 PUBLIC 后面的第二部分内容(tp://mybatis.org/dtd/mybatis-3-config.dtd)
    * @return The InputSource for the DTD
    *
    * @throws org.xml.sax.SAXException If anything goes wrong
@@ -56,9 +60,12 @@ public class XMLMapperEntityResolver implements EntityResolver {
     try {
       if (systemId != null) {
         String lowerCaseSystemId = systemId.toLowerCase(Locale.ENGLISH);
+        //根据配置文件DTD systemId 判断使用ibatis 还是 mybaits DTD
         if (lowerCaseSystemId.contains(MYBATIS_CONFIG_SYSTEM) || lowerCaseSystemId.contains(IBATIS_CONFIG_SYSTEM)) {
+          //加载本地mybatis dtd 文件
           return getInputSource(MYBATIS_CONFIG_DTD, publicId, systemId);
         } else if (lowerCaseSystemId.contains(MYBATIS_MAPPER_SYSTEM) || lowerCaseSystemId.contains(IBATIS_MAPPER_SYSTEM)) {
+          //加载本地ibatis dtd 文件
           return getInputSource(MYBATIS_MAPPER_DTD, publicId, systemId);
         }
       }

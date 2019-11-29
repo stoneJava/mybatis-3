@@ -245,6 +245,7 @@ public class XPathParser {
     if (node == null) {
       return null;
     }
+    //Node 对象包装成XNode
     return new XNode(this, node, variables);
   }
 
@@ -258,7 +259,7 @@ public class XPathParser {
 
   /**
    * 根据mybatis-config.xml自身需要创建一个文档解析器，
-   * 然后调用parse将输入 input source 解析为DOM XML 返回
+   * 然后调用parse将输入 input source 解析为Document 返回
    * @param inputSource
    * @return
    */
@@ -298,6 +299,7 @@ public class XPathParser {
           // NOP
         }
       });
+      //SAX 是事件驱动，会自动调用entityResolver.resolveEntity 读取本地DTD 对文档验证
       return builder.parse(inputSource);
     } catch (Exception e) {
       throw new BuilderException("Error creating document instance.  Cause: " + e, e);

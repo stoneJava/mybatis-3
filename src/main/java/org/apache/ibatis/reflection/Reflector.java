@@ -15,33 +15,16 @@
  */
 package org.apache.ibatis.reflection;
 
-import java.lang.reflect.Array;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
-import java.lang.reflect.GenericArrayType;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.ReflectPermission;
-import java.lang.reflect.Type;
-import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Map.Entry;
-
-import org.apache.ibatis.reflection.invoker.AmbiguousMethodInvoker;
-import org.apache.ibatis.reflection.invoker.GetFieldInvoker;
-import org.apache.ibatis.reflection.invoker.Invoker;
-import org.apache.ibatis.reflection.invoker.MethodInvoker;
-import org.apache.ibatis.reflection.invoker.SetFieldInvoker;
+import org.apache.ibatis.reflection.invoker.*;
 import org.apache.ibatis.reflection.property.PropertyNamer;
 
+import java.lang.reflect.*;
+import java.text.MessageFormat;
+import java.util.*;
+import java.util.Map.Entry;
+
 /**
+ * 通过反射，提取类的字段，get、set 方法，并对没有get、set 方法的字段通过反射方法提供赋值和取值操作
  * This class represents a cached set of class definition information that
  * allows for easy mapping between property names and getter/setter methods.
  *
@@ -52,19 +35,28 @@ public class Reflector {
   private final Class<?> type;
   private final String[] readablePropertyNames;
   private final String[] writablePropertyNames;
+  //存储通过反射生成的字段以及set方法(Invoker)
   private final Map<String, Invoker> setMethods = new HashMap<>();
+  //存储通过放射生成的字段以及get方法(Invoker)
   private final Map<String, Invoker> getMethods = new HashMap<>();
+  //存储对应set方法的参数类型
   private final Map<String, Class<?>> setTypes = new HashMap<>();
+  //存储对应get方法的返回结类型
   private final Map<String, Class<?>> getTypes = new HashMap<>();
+  //反射类的默认构造(无参数)方法
   private Constructor<?> defaultConstructor;
 
   private Map<String, String> caseInsensitivePropertyMap = new HashMap<>();
 
   public Reflector(Class<?> clazz) {
     type = clazz;
+    //获取类的默认构造方法，并初始化defaultConstructor
     addDefaultConstructor(clazz);
+    //获取所有get(is)方法，提取字段，并通过反射方式生成Invoker 调用方式
     addGetMethods(clazz);
+    //同set
     addSetMethods(clazz);
+    //对没有get/set 方法的字段，通过反射动态生成Invoker调用
     addFields(clazz);
     readablePropertyNames = getMethods.keySet().toArray(new String[0]);
     writablePropertyNames = setMethods.keySet().toArray(new String[0]);

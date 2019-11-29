@@ -18,6 +18,7 @@ package org.apache.ibatis.parsing;
 import java.util.Properties;
 
 /**
+ * properties 动态表达式解析类
  * @author Clinton Begin
  * @author Kazuki Shimizu
  */
@@ -36,8 +37,8 @@ public class PropertyParser {
   public static final String KEY_ENABLE_DEFAULT_VALUE = KEY_PREFIX + "enable-default-value";
 
   /**
-   * 默认分隔符,通过 properties 中的org.apache.ibatis.parsing.PropertyParser.enable-default-separator 修改
    * The special property key that specify a separator for key and default value on placeholder.
+   * 默认分隔符,通过 properties 中的org.apache.ibatis.parsing.PropertyParser.enable-default-separator 修改
    *
    * <p>
    *   The default separator is {@code ":"}.
@@ -54,7 +55,9 @@ public class PropertyParser {
   }
 
   public static String parse(String string, Properties variables) {
+    //properties 动态表达式替换
     VariableTokenHandler handler = new VariableTokenHandler(variables);
+    //通用动态表达式解析类，比如动态sql
     GenericTokenParser parser = new GenericTokenParser("${", "}", handler);
     return parser.parse(string);
   }
@@ -74,21 +77,30 @@ public class PropertyParser {
       return (variables == null) ? defaultValue : variables.getProperty(key, defaultValue);
     }
 
+    /**
+     * 用variables 变量中的属性替换动态表达式
+     * @param content
+     * @return
+     */
     @Override
     public String handleToken(String content) {
       if (variables != null) {
         String key = content;
+        //开启自定义分隔符: ${db:username?:ut_user}
         if (enableDefaultValue) {
           final int separatorIndex = content.indexOf(defaultValueSeparator);
           String defaultValue = null;
           if (separatorIndex >= 0) {
             key = content.substring(0, separatorIndex);
+            //根据配置的分割符截取默认值
             defaultValue = content.substring(separatorIndex + defaultValueSeparator.length());
           }
+          //如果配置文件或变量中没有指定对应key的值就使用配置的默认值
           if (defaultValue != null) {
             return variables.getProperty(key, defaultValue);
           }
         }
+        //没有修改默认分隔符或默认值为空，直接获取property属性
         if (variables.containsKey(key)) {
           return variables.getProperty(key);
         }

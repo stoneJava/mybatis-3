@@ -144,14 +144,20 @@ public class XMLConfigBuilder extends BaseBuilder {
     }
   }
 
+  /**
+   * 通过XNode 解析成Properties 对象并返回
+   * @param context
+   * @return
+   */
   private Properties settingsAsProperties(XNode context) {
     if (context == null) {
       return new Properties();
     }
     Properties props = context.getChildrenAsProperties();
     // Check that all settings are known to the configuration class
-    //检查settings节点是否在Configuration 类的定义范围内
+    //检查settings节点是否在Configuration 类的定义范围内, todo:: reflection 模块，看到 reflection 模块时，添加注释
     MetaClass metaConfig = MetaClass.forClass(Configuration.class, localReflectorFactory);
+    //验证key 的合法性
     for (Object key : props.keySet()) {
       if (!metaConfig.hasSetter(String.valueOf(key))) {
         throw new BuilderException("The setting " + key + " is not known.  Make sure you spelled it correctly (case sensitive).");
